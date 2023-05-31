@@ -1,0 +1,34 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:13.3
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./docker/postgres/postgresql.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      # POSTGRES_DB: monolith_db
+      # TZ: Asia/Tokyo
+    hostname: postgres
+    container_name: postgres
+    restart: always
+
+  pgadmin4:
+    image: dpage/pgadmin4:4.30
+    ports:
+        - 8000:80
+    volumes:
+        - ./docker/pgadmin4:/var/lib/pgadmin
+    environment:
+        PGADMIN_DEFAULT_EMAIL: root@localhost
+        PGADMIN_DEFAULT_PASSWORD: root
+    hostname: pgadmin4
+    container_name: pgadmin4
+    depends_on:
+      - postgres
+    restart: always
